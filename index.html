@@ -23,22 +23,22 @@
                     <p>Type in:</p>
                     <code>ipconfig /all</code>
                     <p>
-                        The MAC address is the physical address underlined in yellow. We can also
-                        see the Default Gateway IP (in red).
+                        The MAC address is the physical address underlined in
+                        yellow. We can also see the Default Gateway IP (in red).
                     </p>
                     <img src="images/2_1_mac_addresses.png" alt="" />
                     <h4>Find the default gateway using Wireshark:</h4>
                     <hr />
                     <p>
-                        Because we know the Default Gateway's IP address, we can ping it and find
-                        its MAC address through Wireshark. Use:
+                        Because we know the Default Gateway's IP address, we can
+                        ping it and find its MAC address through Wireshark. Use:
                     </p>
                     <code>ping 192.168.0.1</code>
                     <p>And apply filters in Wireshark:</p>
                     <code>ip.proto == ICMP</code>
                     <p>
-                        Now, upon examining the ECHO Request packet we can see the Dst (destination)
-                        MAC address:
+                        Now, upon examining the ECHO Request packet we can see
+                        the Dst (destination) MAC address:
                     </p>
                     <img src="images/2_1_gateway_mac.png" alt="" />
                 </li>
@@ -46,25 +46,35 @@
                     <h4>To see our Network Adapter's manufactuter:</h4>
                     <hr />
                     <p>Type in the following into cmd:</p>
-                    <code>wmic nic get AdapterType, Name, MACAddress, Manufacturer</code>
+                    <code
+                        >wmic nic get AdapterType, Name, MACAddress,
+                        Manufacturer</code
+                    >
                     <p>
-                        It returns the information about adapter types, names of the adapters, their
-                        mac adresses and manufacturers.
+                        It returns the information about adapter types, names of
+                        the adapters, their mac adresses and manufacturers.
                     </p>
                     <small
-                        >We could have only printed the Manufacturer, but it would not tell us much
-                        about which adapters are we actually using.
+                        >We could have only printed the Manufacturer, but it
+                        would not tell us much about which adapters are we
+                        actually using.
                     </small>
                     <img src="images/2_2_adapter_manufacturer.png" alt="" />
-                    <p>The actual manufacturer of our Network Adapter is underlined with red.</p>
+                    <p>
+                        The actual manufacturer of our Network Adapter is
+                        underlined with red.
+                    </p>
                 </li>
                 <li>
                     <h4>Flushing the ARP cache:</h4>
                     <hr />
-                    <small>To accomplish this task, we had to run CMD as an Administrator.</small>
+                    <small
+                        >To accomplish this task, we had to run CMD as an
+                        Administrator.</small
+                    >
                     <p>
-                        First, we check the initial state of the cache to later verify if the flush
-                        worked:
+                        First, we check the initial state of the cache to later
+                        verify if the flush worked:
                     </p>
                     <code>arp -a</code>
                     <p>displays the current ARP entries.</p>
@@ -73,60 +83,97 @@
                     <code>arp -a</code>
                     <p>is used to again check the entries after the flush.</p>
                     <img src="images/2_3_arp_flush.png" alt="" />
-                    <p>Here we can see that some entries were deleted, so the flush was correct.</p>
+                    <p>
+                        Here we can see that some entries were deleted, so the
+                        flush was correct.
+                    </p>
                 </li>
                 <li>
                     <h4>
-                        Setting the same IP address on two different hosts in the lab and detecting
-                        it using arp request
+                        Setting the same IP address on two different hosts in
+                        the lab and detecting it using arp request
                     </h4>
                     <hr />
+                    <p>
+                        First, we check the IP of one of the machines in the
+                        lab:
+                    </p>
+                    <img src="images/2_4_ip_on_first_machine.PNG" alt="" />
+                    <p>Initial IP address on our Virtual Machine:</p>
+                    <img src="images/2_4_ip_on_vm_before.PNG" alt="" />
+                    <p>
+                        Changing the IP address on the VM to the one on the
+                        physical host:
+                    </p>
+                    <img src="images/2_4_ip_on_vm_change.PNG" alt="" />
+                    <p>
+                        Before clicking OK, we turn on Capturing in Wireshark
+                        and then, we look for the ARP packets.
+                    </p>
+                    <img src="images/2_4_wireshark_grat_arp.PNG" alt="" />
+                    <p>
+                        We notice "Gratituous ARP for 169.254.144.244", which
+                        appeared because of IP spoofing which lead to IP address
+                        duplication.
+                    </p>
                 </li>
 
                 <li>
-                    <h4>Saving packets used to obtain the IP Address with DHCP using Wireshark</h4>
+                    <h4>
+                        Saving packets used to obtain the IP Address with DHCP
+                        using Wireshark
+                    </h4>
                     <hr />
                     <p>First we have to release our current IP address using</p>
                     <code>ipconfig /release</code>
                     <p>Then to obtain an IP address we type in:</p>
                     <code>ipconfig /renew</code>
                     <p>
-                        The result in Wireshark (applying the filter bootp - DHCP uses the Bootstrap
-                        Protocol):
+                        The result in Wireshark (applying the filter bootp -
+                        DHCP uses the Bootstrap Protocol):
                     </p>
                     <img src="images/2_5_wireshark_dhcp.png" alt="" />
-                    <p>The following packets of the DHCP protocol are collected by Wireshark:</p>
+                    <p>
+                        The following packets of the DHCP protocol are collected
+                        by Wireshark:
+                    </p>
                     <ul>
                         <li>
                             <h5>Discover</h5>
                             <p>
-                                First the client sends a DHCPDISCOVER message to every server and
-                                "asks" to keep its previous IP address.
+                                First the client sends a DHCPDISCOVER message to
+                                every server and "asks" to keep its previous IP
+                                address.
                             </p>
-                            <small>Notice, that our IP address is 0.0.0.0 at the moment.</small>
+                            <small
+                                >Notice, that our IP address is 0.0.0.0 at the
+                                moment.</small
+                            >
                         </li>
                         <li>
                             <h5>Offer</h5>
                             <p>
-                                The DHCP server sends a message with a potential IP address of the
-                                client.
+                                The DHCP server sends a message with a potential
+                                IP address of the client.
                             </p>
                         </li>
                         <li>
                             <h5>Request</h5>
                             <p>
-                                The client collects the first IP address obtained from all DHCP
-                                servers that could send a message and broadcasts a DHCPREQUEST
-                                message. It may contain a query for other parameters.
+                                The client collects the first IP address
+                                obtained from all DHCP servers that could send a
+                                message and broadcasts a DHCPREQUEST message. It
+                                may contain a query for other parameters.
                             </p>
                         </li>
                         <li>
                             <h5>ACK (Acknowledge)</h5>
                             <p>
-                                Upon receiving the DHCPREQUEST message, the server may store the IP
-                                address and send a DHCPACK message. If the address specified in
-                                DHCPOFFER cannot be provided anymore, the server sends a DHCPNAK
-                                meessage.
+                                Upon receiving the DHCPREQUEST message, the
+                                server may store the IP address and send a
+                                DHCPACK message. If the address specified in
+                                DHCPOFFER cannot be provided anymore, the server
+                                sends a DHCPNAK meessage.
                             </p>
                         </li>
                     </ul>
@@ -135,16 +182,35 @@
                     <h4>Releasing and renewing the IP</h4>
                     <hr />
                     <p>First we release our current IP address using</p>
-                    <code>ipconfig /release</code> <img src="images/2_6_ip_release.png" alt="" />
+                    <code>ipconfig /release</code>
+                    <img src="images/2_6_ip_release.png" alt="" />
                     <p>
-                        Then, to connect back to the Internet we need to obtain an IP address,
-                        therefore we type in:
+                        Then, to connect back to the Internet we need to obtain
+                        an IP address, therefore we type in:
                     </p>
-                    <code>ipconfig /renew</code> <img src="images/2_6_ip_renew.png" alt="" />
+                    <code>ipconfig /renew</code>
+                    <img src="images/2_6_ip_renew.png" alt="" />
                 </li>
                 <li>
-                    <h4></h4>
+                    <h4>
+                        Changing MAC address of a computer in the lab to the
+                        same as the MAC address of the other computer in the lab
+                        and verifying the IP address obtained
+                    </h4>
                     <hr />
+                    <p>First we check the MAC and IP of our machine:</p>
+                    <img src="images/2_7_mac_on_first_machine.png" alt="" />
+                    <p>
+                        Then, after changing the MAC address of the VM to the
+                        one of the first machine and running:
+                    </p>
+                    <code>ipconfig /renew</code>
+                    <p>we obtained the following result:</p>
+                    <img src="images/2_7_mac_and_ip_on_vm.png" alt="" />
+                    <p>
+                        And as we can see, the IP which was given to the VM
+                        after MAC spoofing is the same as the one on the host.
+                    </p>
                 </li>
             </ol>
         </main>
@@ -153,7 +219,7 @@
         body {
             background: #fafafa;
             color: #363636;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0 10%;
         }
 
